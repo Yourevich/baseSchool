@@ -457,6 +457,25 @@ print(numIdenticalPairs([1,5,77,5,]))
 // попробовать созать массив в массиве и пробежаться по нему
 // задачки на вложенные циклы
 // MVМM + coordinator
+//MVVM+C
+//
+//MVVM + Coordinator
+//
+//POP
+//
+//protocol oriented programming
+//
+//protocol для чего нужны и использование в реальных примерам
+//
+//SOLID
+//
+//Dependency inversion
+//
+//GRASP
+//
+//Антипаттерны
+//
+//Паттерны программирования
 
 
 
@@ -519,7 +538,6 @@ final class MockRecipeViewModel: RecipeProtocol {
         return "Тестовый рецепт обновлен"
     }
     
-    
 }
 
 // ViewController верхний уровень
@@ -537,6 +555,7 @@ final class RecipeController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
 }
 
 let recipeController = RecipeController(recipeViewmodel: RecipeViewModel(recipes: ["Рецепт 1", "Рецепт 2", "Рецепт 3"]))
@@ -549,3 +568,431 @@ mockRecipeController.recipeViewmodel.removeRecipe("Удалить рецепт")
 
 
 
+func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+    for i in 0..<nums.count {
+        for j in i+1..<nums.count {
+            if nums[i] + nums[j] == target {
+                return [i, j]
+            }
+            
+            print("i: \(nums[i])")
+            print("j: \(nums[j])")
+        }
+    }
+    return []
+}
+
+print(twoSum([1,2,3,4,5], 5))
+
+
+
+
+func isPalindrome(_ x: Int) -> Bool {
+       
+    let str = String(x)
+    
+
+//    
+//    if str == String(str.reversed()) {
+//        return true
+//    } else {
+//        return false
+//    }
+//    
+    
+        return str == String(str.reversed())
+    
+    }
+
+print(isPalindrome(121))
+
+
+// Дизайн-паттерны
+// Фабрика
+
+
+final class VegetarianRecipeViewModel: RecipeProtocol {
+    var recipes: [String] = []
+    
+    init(recipes: [String]) {
+        self.recipes = recipes
+    }
+    
+    func addNewRecipe(_ recipe: String) -> String {
+        return "Добавлен новый вегетарианский рецепт"
+    }
+    
+    func removeRecipe(_ recipe: String) -> String {
+        return "Вегетарианский рецепт удален"
+    }
+    
+    func updateRecipe(_ recipe: String) -> String {
+        return "Вегетарианский рецепт обновлен"
+    }
+}
+
+final class MeatLoverRecipeViewModel: RecipeProtocol {
+    var recipes: [String] = []
+    
+    init(recipes: [String]) {
+        self.recipes = recipes
+    }
+    
+    func addNewRecipe(_ recipe: String) -> String {
+        return "Добавлен новый рецепт для мясоедов"
+    }
+    
+    func removeRecipe(_ recipe: String) -> String {
+        return "Рецепт для мясоедов удален"
+    }
+    
+    func updateRecipe(_ recipe: String) -> String {
+        return "Рецепт для мясоедов обновлен"
+    }
+}
+
+final class DessertRecipeViewModel: RecipeProtocol {
+    var recipes: [String] = []
+    
+    init(recipes: [String]) {
+        self.recipes = recipes
+    }
+    
+    func addNewRecipe(_ recipe: String) -> String {
+        return "Добавлен новый десерт"
+    }
+    
+    func removeRecipe(_ recipe: String) -> String {
+        return "Десерт удален"
+    }
+    
+    func updateRecipe(_ recipe: String) -> String {
+        return "Десерт обновлен"
+    }
+}
+
+// создаем фабрику
+
+enum RecipeType {
+    
+    case vegetarian
+    case meatLover
+    case dessert
+}
+
+class RecipeFactory {
+    
+    static func createRecipeViewModel(type: RecipeType, recipes: [String]) -> RecipeProtocol {
+        switch type {
+        case .vegetarian:
+            return VegetarianRecipeViewModel(recipes: recipes)
+        case .meatLover:
+            return MeatLoverRecipeViewModel(recipes: recipes)
+        case .dessert:
+            return DessertRecipeViewModel(recipes: recipes)
+        }
+    }
+}
+
+// применение фабрики
+// на главном экране при создании нового рецепта выбрали тип рецепта. В зависимости от выбранного типа создается нужная вьюмодель и передается на детальный экран с рецептом.
+
+// этот код был бы внутри метода при выборе типа рецепта
+let vegetarianViewModel = RecipeFactory.createRecipeViewModel(type: .vegetarian, recipes: ["Салат", "Овощное карри"])
+
+let detailRecipeController = RecipeController(recipeViewmodel: vegetarianViewModel)
+
+
+let meatLoverViewModel = RecipeFactory.createRecipeViewModel(type: .meatLover, recipes: ["Стейк", "Бургер"])
+let dessertViewModel = RecipeFactory.createRecipeViewModel(type: .dessert, recipes: ["Тирамису", "Чизкейк"])
+
+print(vegetarianViewModel.addNewRecipe("Новый вегетарианский рецепт"))
+// Выведет: Добавлен новый вегетарианский рецепт
+
+print(meatLoverViewModel.addNewRecipe("Новый рецепт для мясоедов"))
+// Выведет: Добавлен новый рецепт для мясоедов
+
+print(dessertViewModel.addNewRecipe("Новый десерт"))
+// Выведет: Добавлен новый десерт
+
+
+
+//Адаптер
+
+//старая логика
+class LegacyRecipeManager {
+    
+    private var legacyRecipes: [String] = []
+    
+    func add(recipe: String) {
+        legacyRecipes.append(recipe)
+    }
+    
+    func delete(recipe: String) -> Bool {
+        if let index = legacyRecipes.firstIndex(of: recipe) {
+            legacyRecipes.remove(at: index)
+            return true
+        }
+        return false
+    }
+    
+    func modify(recipe: String, newRecipe: String) -> Bool {
+        if let index = legacyRecipes.firstIndex(of: recipe) {
+            legacyRecipes[index] = newRecipe
+            return true
+        }
+        return false
+    }
+    
+    func getRecipes() -> [String] {
+        return legacyRecipes
+    }
+}
+
+//адаптер для адаптации к новой логике. Адаптер должен "перевести" вызовы методов из RecipeProtocol в вызовы методов LegacyRecipeManager, сохраняя при этом их логику.
+
+class LegacyRecipeAdapter: RecipeProtocol {
+    
+    private var legacyManager: LegacyRecipeManager
+    
+    init(legacyManager: LegacyRecipeManager) {
+        self.legacyManager = legacyManager
+    }
+    
+    var recipes: [String] {
+        get {
+            return legacyManager.getRecipes()
+        }
+        set {
+            // Заменяем старые рецепты новыми
+            for recipe in newValue {
+                if !legacyManager.getRecipes().contains(recipe) {
+                    legacyManager.add(recipe: recipe)
+                }
+            }
+        }
+    }
+    
+    func addNewRecipe(_ recipe: String) -> String {
+        legacyManager.add(recipe: recipe)
+        return "Старый менеджер: добавлен рецепт \(recipe)"
+    }
+    
+    func removeRecipe(_ recipe: String) -> String {
+        let success = legacyManager.delete(recipe: recipe)
+        return success ? "Старый менеджер: рецепт удален" : "Старый менеджер: рецепт не найден"
+    }
+    
+    func updateRecipe(_ recipe: String) -> String {
+        if let firstRecipe = legacyManager.getRecipes().first {
+            let success = legacyManager.modify(recipe: firstRecipe, newRecipe: recipe)
+            return success ? "Старый менеджер: рецепт обновлен" : "Старый менеджер: обновление не удалось"
+        }
+        return "Старый менеджер: рецепты отсутствуют"
+    }
+}
+
+
+// применение
+
+let legacyManager = LegacyRecipeManager()
+
+// Создаем адаптер для старого менеджера
+let legacyAdapter = LegacyRecipeAdapter(legacyManager: legacyManager)
+
+// Используем адаптер как объект, соответствующий RecipeProtocol
+legacyAdapter.addNewRecipe("Старый рецепт")
+print(legacyAdapter.recipes) // ["Старый рецепт"]
+
+legacyAdapter.removeRecipe("Старый рецепт")
+print(legacyAdapter.recipes) // []
+
+
+// в контроллере
+
+let legacyController = RecipeController(recipeViewmodel: legacyAdapter)
+legacyController.recipeViewmodel.addNewRecipe("Старый рецепт через адаптер добавлен")
+
+
+
+//Given an integer n, return a string array answer (1-indexed) where:
+// • answer[i] == "FizzBuzz" if i is divisible by 3 and 5.
+// • answer[i] == "Fizz" if i is divisible by 3.
+// • answer[i] == "Buzz" if i is divisible by 5.
+// • answer[i] == i (as a string) if none of the above conditions are true.
+
+
+//Example 1:
+//Input: n = 3
+//Output: ["1","2","Fizz"]
+//Example 2:
+//Input: n = 5
+//Output: ["1","2","Fizz","4","Buzz"]
+//Example 3:
+//Input: n = 15
+//Output: ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
+
+func fizzBuzz(_ n: Int) -> [String] {
+    
+    var result:[String] = []
+    
+    for i in 1...n {
+        if i % 3 == 0 && i % 5 == 0 {
+            result.append("FizzBuzz")
+        } else if i % 3 == 0 {
+            result.append("Fizz")
+        } else if i % 5  == 0 {
+            result.append("Buzz")
+        } else {
+            result.append(String(i))
+        }
+    }
+    
+    return result
+}
+
+
+print(fizzBuzz(15))
+
+
+//func fizzBuzz(_ n: Int) -> [String] {
+//        (1...n).map { number in
+//            switch (number % 3, number % 5) {
+//                case (0, 0): "FizzBuzz"
+//                case (0, _): "Fizz"
+//                case (_, 0): "Buzz"
+//                default: "\(number)"
+//            }
+//        }
+//    }
+
+
+// Абстрактная фабрика
+
+//протокол
+protocol RecipeAbstractFactory {
+    func createRecipeViewModel(recipes: [String]) -> RecipeProtocol
+}
+
+//создание
+final class RecipeViewModelFactory: RecipeAbstractFactory {
+    func createRecipeViewModel(recipes: [String]) -> RecipeProtocol {
+        return RecipeViewModel(recipes: recipes)
+    }
+}
+
+final class MockRecipeViewModelFactory: RecipeAbstractFactory {
+    func createRecipeViewModel(recipes: [String]) -> RecipeProtocol {
+        return MockRecipeViewModel(recipes: recipes)
+    }
+}
+
+//применение
+let factory: RecipeAbstractFactory = RecipeViewModelFactory()
+let recipeViewModel = factory.createRecipeViewModel(recipes: ["Рецепт 1", "Рецепт 2"])
+let controller = RecipeController(recipeViewmodel: recipeViewModel)
+
+let mockFactory: RecipeAbstractFactory = MockRecipeViewModelFactory()
+let mockRecipeViewModel = mockFactory.createRecipeViewModel(recipes: ["Тестовый рецепт"])
+let mocController = RecipeController(recipeViewmodel: mockRecipeViewModel)
+
+
+
+//Цепочка обязанностей
+
+//протокол
+protocol LoginHandler {
+    var nextHandler: LoginHandler? { get set }
+    func handle(request: (login: String, password: String)) -> String?
+    func setNext(handler: LoginHandler) -> LoginHandler
+}
+
+//базовый класс проверки
+class BaseLoginHandler: LoginHandler {
+    var nextHandler: LoginHandler?
+
+    //метод устанавливает следующий обработчик и возвращает его, что позволяет нам связывать обработчики в цепочку.
+    func setNext(handler: LoginHandler) -> LoginHandler {
+        self.nextHandler = handler
+        return handler
+    }
+    
+    //этот метод проверяет, есть ли следующий обработчик. Если да, то передает запрос ему. Если следующего обработчика нет, возвращает сообщение "Данные прошли все проверки".
+    func handle(request: (login: String, password: String)) -> String? {
+        if let next = nextHandler {
+            return next.handle(request: request)
+        } else {
+            return "Данные прошли все проверки"
+        }
+    }
+}
+
+//дополнительные классы проверки
+class EmptyLoginHandler: BaseLoginHandler {
+    override func handle(request: (login: String, password: String)) -> String? {
+        if request.login.isEmpty {
+            return "Ошибка: Логин не может быть пустым"
+        } else {
+            return super.handle(request: request)
+        }
+    }
+}
+
+class EmptyPasswordHandler: BaseLoginHandler {
+    override func handle(request: (login: String, password: String)) -> String? {
+        if request.password.isEmpty {
+            return "Ошибка: Пароль не может быть пустым"
+        } else {
+            return super.handle(request: request)
+        }
+    }
+}
+
+class CredentialsCheckHandler: BaseLoginHandler {
+    override func handle(request: (login: String, password: String)) -> String? {
+        // В этом примере логин - "user", пароль - "password"
+        if request.login == "user" && request.password == "password" {
+            return "Успешный вход"
+        } else {
+            return "Ошибка: Неверные логин или пароль"
+        }
+    }
+}
+
+//Примение
+
+let emptyLoginHandler = EmptyLoginHandler()
+let emptyPasswordHandler = EmptyPasswordHandler()
+let credentialsCheckHandler = CredentialsCheckHandler()
+
+// Выстраиваем цепочку: проверка логина -> проверка пароля -> проверка учетных данных
+emptyLoginHandler.setNext(handler: emptyPasswordHandler).setNext(handler: credentialsCheckHandler)
+
+// Пример использования цепочки для проверки данных пользователя
+let userInput = (login: "user", password: "password")
+let result = emptyLoginHandler.handle(request: userInput)
+print(result ?? "Запрос не обработан")  // Выведет: "Успешный вход"
+
+
+// climbStairs
+func climbStairs(_ n: Int) -> Int {
+    if n == 1 {
+        return 1
+    } else if n == 2 {
+        return 2
+    } else {
+        return climbStairs(n - 1) + climbStairs(n - 2)
+    }
+}
+
+print(climbStairs(3))
+
+
+// plusOne
+
+func plusOne(_ digits: [Int]) -> [Int] {
+    var result = digits
+    result[result.count - 1] += 1
+    return result
+}
+print(plusOne([1,2,3,4,5]))
